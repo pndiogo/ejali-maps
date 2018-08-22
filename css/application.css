@@ -26,7 +26,7 @@ ol > li {
   /* Create a positioning context */
   margin: 0 0 6px 2em;
   /* Give each list item a left margin to make room for the numbers */
-  padding: 4px 8px;
+  padding: 18px 8px;
   /* Add some spacing around the content */
   list-style: none;
   /* Disable the normal item numbering */
@@ -143,20 +143,44 @@ ol > li .icon {
   opacity: 0;
 }
 
-ol > li .delete {
+ol > li .edit,
+ol > li .check {
   right: 0.2em;
 }
-ol > li .edit {
+ol > li .delete {
   right: 2.2em;
 }
 ol > li .divDelete,
 ol > li .divEdit {
   height: 1.7em;
 }
+ol > li .check {
+  opacity: 100;
+  display: none;
+}
 
 .fill-color {
   fill: #b13c69;
   fill-opacity: 0.9;
+}
+
+input[type=text] {
+  width: 100%;
+  padding: 5px 5px 5px 5px;
+  margin-top: 12px;
+  box-sizing: border-box;
+  font-family: "Raleway", sans-serif;
+  color: #b13c69;
+  border: none;
+  border-bottom: 1px solid #e1a5bc;
+  background-color: #eeea72;
+}
+input[type=text].input-h3 {
+  font-size: 1em;
+  font-weight: 600;
+}
+input[type=text].input-p {
+  font-size: 1rem;
 }
 
 /* MEDIA QUERIES ---------------------------------- */

@@ -94,15 +94,25 @@ const makeListItem = (dataId, cssClass, title, info) => {
         </svg>
         <div class="icon edit divEdit">
         </div>
+
+        <svg class="icon check" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 26 26">
+            <path class="fill-color" d="m.3,14c-0.2-0.2-0.3-0.5-0.3-0.7s0.1-0.5 0.3-0.7l1.4-1.4c0.4-0.4 1-0.4 1.4,0l.1,.1 5.5,5.9c0.2,0.2 0.5,0.2 0.7,0l13.4-13.9h0.1v-8.88178e-16c0.4-0.4 1-0.4 1.4,0l1.4,1.4c0.4,0.4 0.4,1 0,1.4l0,0-16,16.6c-0.2,0.2-0.4,0.3-0.7,0.3-0.3,0-0.5-0.1-0.7-0.3l-7.8-8.4-.2-.3z"/>
+        </svg>
+        <div class="icon check divCheck">
+        </div>
     </li>
     `;
     $($list).append(listItem);
 };
 
 // Hide #list-header-p when places exist
-if (arrData.length > 0) {
-    $($p).hide();
-}
+const arrDataLenght = () => {
+    if (arrData.length > 0) {
+        $($p).hide();
+    } else {
+        $($p).show();
+    }
+};
 
 // Click event to DELETE item and marker
 $('.places-list').on('click', '.divDelete', (e) => {
@@ -119,14 +129,60 @@ $('.places-list').on('click', '.divDelete', (e) => {
     arrData.splice(arrIndex,1);
 
     mymap.closePopup()
-})
+
+    arrDataLenght();
+});
 
 // Click event to EDIT item and marker
 $('.places-list').on('click', '.divEdit', (e) => {
     let icon = e.target;
+
+    let h3 = $(icon).siblings('h3')
+    let h3Text = $(h3).text();
+    let p = $(icon).siblings('p');
+    let pText = $(p).text();
+
     let id = $(icon).parent().attr('data-id');
+    
+    $('.icon').hide();
+    $(icon).siblings('.check').show();
+
+    $(h3).remove();
+    $(p).remove();
+
+    $(icon).parent().prepend('<input type="text" data-id="'+id+'" class="input-p" placeholder="Description" value="'+pText+'">');
+    $(icon).parent().prepend('<input type="text" data-id="'+id+'" class="input-h3" placeholder="Title" value="'+h3Text+'" autofocus>');
+    
+});
+
+// Click event to CHECK ICON
+$('.places-list').on('click', '.check', (e) => {
+    let icon = e.target;
+    let id = $(icon).parent().attr('data-id');
+
     console.log(id);
-})
+    
+    let h3 = $(icon).siblings('h3')
+    let p = $(icon).siblings('p');
+
+    let title = $('.input-h3').val();
+    let desc = $('.input-p').val();
+
+    $('.input-h3').remove();
+    $('.input-p').remove();
+
+    $(icon).parent().prepend('<p data-id="'+id+'">'+desc+'</p>');
+    $(icon).parent().prepend('<h3 data-id="'+id+'">'+title+'</h3');
+
+    markers[id].bindPopup(`<b>${title}</b><br>${desc}`);
+
+    arrData.findIndex(x => x.id === parseInt(id));
+    arrData[parseInt(id)].title = title;
+    arrData[parseInt(id)].info = desc;
+
+    $('.icon').show();
+    $('.check').hide();
+});
 
 // Get marker ID and select correspondent list item
 $('.map').on('click', '.leaflet-marker-icon', (e) => {
@@ -144,7 +200,7 @@ $('.map').on('click', '.leaflet-marker-icon', (e) => {
 $('.places-list').on('click', '.places-item', (e) => {
     const el = $(e.srcElement || e.target),
     id = $(el).attr('data-id');
-    console.log(id);
+    
     $('.places-item').removeClass('selected');
     $('li[data-id="'+id+'"]').addClass('selected');
 
@@ -199,6 +255,8 @@ arrData.forEach((place) => {
         makeListItem(dataId, cssClass, place.title, place.info)
 
         markersCount += 1;
+
+        arrDataLenght();
     }
 });
 
