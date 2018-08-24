@@ -151,7 +151,8 @@ ol > li .delete {
   right: 2.2em;
 }
 ol > li .divDelete,
-ol > li .divEdit {
+ol > li .divEdit,
+ol > li .divCheck {
   height: 1.7em;
 }
 ol > li .check {

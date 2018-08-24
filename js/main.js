@@ -8,14 +8,14 @@ let arrData = [
     'title': 'Marker One',
     'info': 'I am the popup one.',
     'lat': 51.5,
-    'lang': -0.09 
+    'lang': -0.09
     },
     {
     'id': 115,
     'title': 'Marker Two',
     'info': 'I am the popup two.',
     'lat': 51.5,
-    'lang': -0.08 
+    'lang': -0.08
     },
     {
     'id': 2,
@@ -38,13 +38,14 @@ let markers = {};
 // VARIABLES
 // ==========================================================================
 
-let mapLat = arrData[0].lat; /************* para ver mais tarde */
-let mapLong = arrData[0].lang; /*********** para ver mais tarde */
+const mapLat = arrData[0].lat; /************* para ver mais tarde */
+const mapLong = arrData[0].lang; /*********** para ver mais tarde */
 
 const $p = $('#list-header-p');
 const $list = $('.places-list');
 
-let markersCount = 0;
+
+let placesCount = 15;
 
 
 // ==========================================================================
@@ -53,7 +54,7 @@ let markersCount = 0;
 
 // Build list item with title and info
 const makeListItem = (dataId, cssClass, title, info) => {
-    let listItem = `                
+    const listItem = `                
     <li data-id="${dataId}" class="places-item ${cssClass}">
         <h3 data-id="${dataId}">${title}</h3>
         <p data-id="${dataId}">${info}</p>
@@ -106,7 +107,7 @@ const makeListItem = (dataId, cssClass, title, info) => {
 };
 
 // Hide #list-header-p when places exist
-const arrDataLenght = () => {
+const arrDataLength = () => {
     if (arrData.length > 0) {
         $($p).hide();
     } else {
@@ -116,33 +117,33 @@ const arrDataLenght = () => {
 
 // Click event to DELETE item and marker
 $('.places-list').on('click', '.divDelete', (e) => {
-    let icon = e.target;
-    let id = $(icon).parent().attr('data-id');
+    const icon = e.target;
+    const id = $(icon).parent().attr('data-id');
     
     $(icon).parent().remove();
     $('#'+id).remove();
 
     delete markers[id];
 
-    let arrIndex = arrData.findIndex(x => x.id === parseInt(id));
+    const arrIndex = arrData.findIndex(x => x.id === parseInt(id));
 
     arrData.splice(arrIndex,1);
 
     mymap.closePopup()
 
-    arrDataLenght();
+    arrDataLength();
 });
 
 // Click event to EDIT item and marker
 $('.places-list').on('click', '.divEdit', (e) => {
-    let icon = e.target;
+    const icon = e.target;
 
-    let h3 = $(icon).siblings('h3')
-    let h3Text = $(h3).text();
-    let p = $(icon).siblings('p');
-    let pText = $(p).text();
+    const h3 = $(icon).siblings('h3')
+    const h3Text = $(h3).text();
+    const p = $(icon).siblings('p');
+    const pText = $(p).text();
 
-    let id = $(icon).parent().attr('data-id');
+    const id = $(icon).parent().attr('data-id');
     
     $('.icon').hide();
     $(icon).siblings('.check').show();
@@ -157,16 +158,11 @@ $('.places-list').on('click', '.divEdit', (e) => {
 
 // Click event to CHECK ICON
 $('.places-list').on('click', '.check', (e) => {
-    let icon = e.target;
-    let id = $(icon).parent().attr('data-id');
+    const icon = e.target;
+    const id = $(icon).parent().attr('data-id');
 
-    console.log(id);
-    
-    let h3 = $(icon).siblings('h3')
-    let p = $(icon).siblings('p');
-
-    let title = $('.input-h3').val();
-    let desc = $('.input-p').val();
+    const title = $('.input-h3').val();
+    const desc = $('.input-p').val();
 
     $('.input-h3').remove();
     $('.input-p').remove();
@@ -176,27 +172,28 @@ $('.places-list').on('click', '.check', (e) => {
 
     markers[id].bindPopup(`<b>${title}</b><br>${desc}`);
 
-    arrData.findIndex(x => x.id === parseInt(id));
-    arrData[parseInt(id)].title = title;
-    arrData[parseInt(id)].info = desc;
+    const index = arrData.findIndex(x => x.id === parseInt(id));
+    console.log(index);
+    arrData[index].title = title;
+    arrData[index].info = desc;
 
     $('.icon').show();
     $('.check').hide();
 });
 
-// Get marker ID and select correspondent list item
+// Marker click event
 $('.map').on('click', '.leaflet-marker-icon', (e) => {
     // Use the event to find the clicked element
     const el = $(e.srcElement || e.target),
-        id = el.attr('id');
- 
-        $('.places-item').removeClass('selected');
-        $('li[data-id="'+id+'"]').addClass('selected'); 
+    id = el.attr('id');
 
-        mymap.panTo(markers[id].getLatLng());
+    $('.places-item').removeClass('selected');
+    $('li[data-id="'+id+'"]').addClass('selected'); 
+
+    mymap.panTo(markers[id].getLatLng());
  });
 
-// Get list item DATA-ID and select correspondent marker and open popup
+// List click event
 $('.places-list').on('click', '.places-item', (e) => {
     const el = $(e.srcElement || e.target),
     id = $(el).attr('data-id');
@@ -213,7 +210,7 @@ $('.places-list').on('click', '.places-item', (e) => {
 // MAP INIT
 // ==========================================================================
 
-let mymap = L.map('map-1').setView([mapLat, mapLong], 13);
+const mymap = L.map('map-1').setView([mapLat, mapLong], 13);
 
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
     maxZoom: 18,
@@ -223,6 +220,28 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
     id: 'mapbox.streets'
 }).addTo(mymap);
 
+mymap.on('click', function(e){
+    placesCount += 1;
+    const marker = new L.marker(e.latlng).addTo(mymap).bindPopup(`<b>Title</b><br>Description`).openPopup();
+    console.log(e.latlng.lat, e.latlng.lng);
+    markers[placesCount] = L.marker([e.latlng.lat, e.latlng.lng]).addTo(mymap).bindPopup(`<b>Title</b><br>Description`);
+    markers[placesCount]._icon.id = placesCount;
+    arrData.push({
+        'id': placesCount,
+        'title': 'Title',
+        'info': 'Description',
+        'lat': e.latlng.lat,
+        'lang': e.latlng.lng
+    });
+
+    $('.places-item').removeClass('selected');
+
+    const cssClass = "selected";
+    
+    makeListItem(placesCount, cssClass, 'Title', 'Description');
+
+    arrDataLength();
+});
 
 // ==========================================================================
 // MARKERS INIT WITH CONTENT
@@ -242,7 +261,7 @@ arrData.forEach((place) => {
         markers[place.id]._icon.id = place.id;
 
         let cssClass;
-        let dataId = place.id;
+        const dataId = place.id;
 
         if (place === arrData[0]) {
             cssClass = "selected";
@@ -254,9 +273,7 @@ arrData.forEach((place) => {
         
         makeListItem(dataId, cssClass, place.title, place.info)
 
-        markersCount += 1;
-
-        arrDataLenght();
+        arrDataLength();
     }
 });
 
