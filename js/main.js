@@ -4,21 +4,21 @@
 
 let arrData = [
     {
-    'id': 0,
+    'id': 45,
     'title': 'Marker One',
     'info': 'I am the popup one.',
     'lat': 51.5,
     'lang': -0.09
     },
     {
-    'id': 115,
+    'id': 49,
     'title': 'Marker Two',
     'info': 'I am the popup two.',
     'lat': 51.5,
     'lang': -0.08
     },
     {
-    'id': 2,
+    'id': 51,
     'title': 'Marker Three',
     'info': 'I am the popup three.',
     'lat': 51.5,
@@ -45,7 +45,19 @@ const $p = $('#list-header-p');
 const $list = $('.places-list');
 
 
-let placesCount = 15;
+// ==========================================================================
+// MAP INIT
+// ==========================================================================
+
+const mymap = L.map('map-1').setView([mapLat, mapLong], 13);
+
+L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    id: 'mapbox.streets'
+}).addTo(mymap);
 
 
 // ==========================================================================
@@ -106,6 +118,7 @@ const makeListItem = (dataId, cssClass, title, info) => {
     $($list).append(listItem);
 };
 
+
 // Hide #list-header-p when places exist
 const arrDataLength = () => {
     if (arrData.length > 0) {
@@ -115,51 +128,58 @@ const arrDataLength = () => {
     }
 };
 
+
+// ==========================================================================
+// EVENTS
+// ==========================================================================
+
 // Click event to DELETE item and marker
 $('.places-list').on('click', '.divDelete', (e) => {
-    const icon = e.target;
-    const id = $(icon).parent().attr('data-id');
+    const iconDelete = e.target;
+    const id = $(iconDelete).parent().attr('data-id');
     
-    $(icon).parent().remove();
+    $(iconDelete).parent().remove();
     $('#'+id).remove();
+    mymap.removeLayer(markers[id]);
+
+    mymap.closePopup()
 
     delete markers[id];
 
     const arrIndex = arrData.findIndex(x => x.id === parseInt(id));
-
     arrData.splice(arrIndex,1);
-
-    mymap.closePopup()
 
     arrDataLength();
 });
 
+
 // Click event to EDIT item and marker
 $('.places-list').on('click', '.divEdit', (e) => {
-    const icon = e.target;
+    const iconEdit = e.target;
 
-    const h3 = $(icon).siblings('h3')
+    const h3 = $(iconEdit).siblings('h3')
     const h3Text = $(h3).text();
-    const p = $(icon).siblings('p');
+    const p = $(iconEdit).siblings('p');
     const pText = $(p).text();
 
-    const id = $(icon).parent().attr('data-id');
+    const id = $(iconEdit).parent().attr('data-id');
     
     $('.icon').hide();
-    $(icon).siblings('.check').show();
+    $(iconEdit).siblings('.check').show();
 
     $(h3).remove();
     $(p).remove();
 
-    $(icon).parent().prepend('<input type="text" data-id="'+id+'" class="input-p" placeholder="Description" value="'+pText+'">');
-    $(icon).parent().prepend('<input type="text" data-id="'+id+'" class="input-h3" placeholder="Title" value="'+h3Text+'" autofocus>');
+    $(iconEdit).parent().prepend('<input type="text" data-id="'+id+'" class="input-p" placeholder="Description" value="'+pText+'">');
+    $(iconEdit).parent().prepend('<input type="text" data-id="'+id+'" class="input-h3" placeholder="Title" value="'+h3Text+'" autofocus>');
     
 });
 
+
 // Click event to CHECK ICON
 $('.places-list').on('click', '.check', (e) => {
-    const icon = e.target;
-    const id = $(icon).parent().attr('data-id');
+    const iconCheck = e.target;
+    const id = $(iconCheck).parent().attr('data-id');
 
     const title = $('.input-h3').val();
     const desc = $('.input-p').val();
@@ -167,19 +187,20 @@ $('.places-list').on('click', '.check', (e) => {
     $('.input-h3').remove();
     $('.input-p').remove();
 
-    $(icon).parent().prepend('<p data-id="'+id+'">'+desc+'</p>');
-    $(icon).parent().prepend('<h3 data-id="'+id+'">'+title+'</h3');
+    $(iconCheck).parent().prepend('<p data-id="'+id+'">'+desc+'</p>');
+    $(iconCheck).parent().prepend('<h3 data-id="'+id+'">'+title+'</h3');
 
     markers[id].bindPopup(`<b>${title}</b><br>${desc}`);
 
     const index = arrData.findIndex(x => x.id === parseInt(id));
-    console.log(index);
+    
     arrData[index].title = title;
     arrData[index].info = desc;
 
     $('.icon').show();
     $('.check').hide();
 });
+
 
 // Marker click event
 $('.map').on('click', '.leaflet-marker-icon', (e) => {
@@ -192,6 +213,7 @@ $('.map').on('click', '.leaflet-marker-icon', (e) => {
 
     mymap.panTo(markers[id].getLatLng());
  });
+
 
 // List click event
 $('.places-list').on('click', '.places-item', (e) => {
@@ -206,28 +228,17 @@ $('.places-list').on('click', '.places-item', (e) => {
 });
 
 
-// ==========================================================================
-// MAP INIT
-// ==========================================================================
-
-const mymap = L.map('map-1').setView([mapLat, mapLong], 13);
-
-L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-    maxZoom: 18,
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    id: 'mapbox.streets'
-}).addTo(mymap);
-
+// Map click event
 mymap.on('click', function(e){
-    placesCount += 1;
-    const marker = new L.marker(e.latlng).addTo(mymap).bindPopup(`<b>Title</b><br>Description`).openPopup();
+    const marker = new L.marker([e.latlng.lat, e.latlng.lng]).addTo(mymap).bindPopup(`<b>Title</b><br>Description`).openPopup();
     console.log(e.latlng.lat, e.latlng.lng);
-    markers[placesCount] = L.marker([e.latlng.lat, e.latlng.lng]).addTo(mymap).bindPopup(`<b>Title</b><br>Description`);
-    markers[placesCount]._icon.id = placesCount;
+
+    markers[marker._leaflet_id] = marker;
+
+    // markers[placesCount] = L.marker([e.latlng.lat, e.latlng.lng]).addTo(mymap).bindPopup(`<b>Title</b><br>Description`);
+    // markers[placesCount]._icon.id = placesCount;
     arrData.push({
-        'id': placesCount,
+        'id': marker._leaflet_id,
         'title': 'Title',
         'info': 'Description',
         'lat': e.latlng.lat,
@@ -238,16 +249,17 @@ mymap.on('click', function(e){
 
     const cssClass = "selected";
     
-    makeListItem(placesCount, cssClass, 'Title', 'Description');
+    makeListItem(marker._leaflet_id, cssClass, 'Title', 'Description');
 
     arrDataLength();
 });
 
+
 // ==========================================================================
-// MARKERS INIT WITH CONTENT
+// MARKERS INIT WITH CONTENT FROM SERVER
 // ==========================================================================
 
-arrData.forEach((place) => {
+arrData.forEach(place => {
     if (arrData.length > 0) {
 
         markers[place.id] = L.marker([place.lat, place.lang],
@@ -257,8 +269,6 @@ arrData.forEach((place) => {
         )
         .addTo(mymap)
         .bindPopup(`<b>${place.title}</b><br>${place.info}`);
-
-        markers[place.id]._icon.id = place.id;
 
         let cssClass;
         const dataId = place.id;
@@ -271,60 +281,8 @@ arrData.forEach((place) => {
             cssClass = "";
         }
         
-        makeListItem(dataId, cssClass, place.title, place.info)
-
-        arrDataLength();
+        makeListItem(dataId, cssClass, place.title, place.info)        
     }
+
+    arrDataLength();
 });
-
-        // let marker = L.marker([place.lat, place.lang],
-        //     {
-        //     bounceOnAdd: true
-        //     }
-        // )
-        // .addTo(mymap)
-        // .bindPopup(`<b>${place.title}</b><br>${place.info}`);
-
-
-// mymap.on('popupopen', (e) => {
-//     const popUpContent = e.popup._content;
-//     console.log(popUpContent);
-//     p.innerHTML = popUpContent;
-// });
-
-// mymap.on('popupclose', (e) => {
-//     p.innerHTML = 'dasfasdfds';
-// });
-
-// marker.bounce({duration: 1000, height: 200}, function(){console.log("done")});
-
-// function onMarkerClick(e) {
-//    L.popup()
-//     .setContent('dasda')
-//     .openOn(map);
-
-//     // console.log('test');
-//     // L.popup().openOn(mymap);
-//     // var content = e.target.getContent();
- 
-//     // console.log(content);
-// }
-
-// mymap.on('click', onMarkerClick);
-
-
-// ==========================================================================
-// POP UP INIT
-// ==========================================================================
-
-// const popup = L.popup();
-
-// function onMapClick(e) {
-//     popup
-//         .setLatLng(e.latlng)
-//         .setContent("You clicked the map at " + e.latlng.toString())
-//         .openOn(mymap);
-// }
-
-// mymap.on('click', onMapClick);
-
