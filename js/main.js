@@ -260,6 +260,15 @@ $('.places-list').on('click', '.check', (e) => {
 });
 
 
+// Enter keypress event to CHECK ICON
+$('.places-list').on('keydown', function(event){ 
+    const keyCode = (event.keyCode ? event.keyCode : event.which);   
+    if (keyCode == 13) {
+        $(event.target).parent().find('.check').trigger('click');        
+    }
+});
+
+
 // Marker click event
 $('.map').on('click', '.leaflet-marker-icon', (e) => {
     // Use the event to find the clicked element
