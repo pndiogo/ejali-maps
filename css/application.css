@@ -147,12 +147,16 @@ ol > li .edit,
 ol > li .check {
   right: 0.2em;
 }
-ol > li .delete {
+ol > li .drag {
   right: 2.2em;
+}
+ol > li .delete {
+  right: 4.2em;
 }
 ol > li .divDelete,
 ol > li .divEdit,
-ol > li .divCheck {
+ol > li .divCheck,
+ol > li .divDrag {
   height: 1.7em;
 }
 ol > li .check {

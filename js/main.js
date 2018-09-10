@@ -4,25 +4,32 @@
 
 let arrData = [
     {
-    'id': 45,
-    'title': 'Marker One',
-    'info': 'I am the popup one.',
+    'id': 40,
+    'title': "I'm a marker",
+    'info': "Nice to meet you!",
     'lat': 51.5,
     'lang': -0.09
     },
     {
-    'id': 49,
-    'title': 'Marker Two',
-    'info': 'I am the popup two.',
+    'id': 44,
+    'title': "You can edit my title",
+    'info': "And my description.",
     'lat': 51.5,
     'lang': -0.08
     },
     {
-    'id': 51,
-    'title': 'Marker Three',
-    'info': 'I am the popup three.',
+    'id': 46,
+    'title': "Reorder?",
+    'info': "It's easy, just drag me.",
     'lat': 51.5,
     'lang': -0.07
+    },
+    {
+    'id': 48,
+    'title': "Don't like me?",
+    'info': "You can delete me!",
+    'lat': 51.5,
+    'lang': -0.06
     }
 ];
 
@@ -43,6 +50,9 @@ const mapLong = arrData[0].lang; /*********** para ver mais tarde */
 
 const $p = $('#list-header-p');
 const $list = $('.places-list');
+
+const sortableList = document.querySelector('.places-list');
+const sortable = Sortable.create(sortableList);
 
 
 // ==========================================================================
@@ -94,7 +104,47 @@ const makeListItem = (dataId, cssClass, title, info) => {
         <div class="icon delete divDelete">
         </div>
 
-    
+        <svg version="1.1" class="icon drag" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="459px" height="459px" viewBox="0 0 459 459" style="enable-background:new 0 0 459 459;" xml:space="preserve">
+        <g>
+            <g id="swap-vert" class="fill-color">
+                <path d="M331.5,357V178.5h-51V357H204l102,102l102-102H331.5z M153,0L51,102h76.5v178.5h51V102H255L153,0z"/>
+            </g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        </svg>
+        <div class="icon drag divDrag">
+        </div>
+
         <svg class="icon edit" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
         width="528.899px" height="528.899px" viewBox="0 0 528.899 528.899" style="enable-background:new 0 0 528.899 528.899;"
         xml:space="preserve">
@@ -163,50 +213,58 @@ $('.places-list').on('click', '.divEdit', (e) => {
     const pText = $(p).text();
 
     const id = $(iconEdit).parent().attr('data-id');
+    markers[id].openPopup();
     
-    $('.icon').hide();
-    $(iconEdit).siblings('.check').show();
+    $(iconEdit).parent().find('.delete').hide();
+    $(iconEdit).parent().find('.drag').hide();
+    $(iconEdit).parent().find('.edit').hide();
+    $(iconEdit).parent().find('.check').show();
 
     $(h3).remove();
     $(p).remove();
 
     $(iconEdit).parent().prepend('<input type="text" data-id="'+id+'" class="input-p" placeholder="Description" value="'+pText+'">');
     $(iconEdit).parent().prepend('<input type="text" data-id="'+id+'" class="input-h3" placeholder="Title" value="'+h3Text+'" autofocus>');
-    
 });
 
 
 // Click event to CHECK ICON
 $('.places-list').on('click', '.check', (e) => {
     const iconCheck = e.target;
+    
     const id = $(iconCheck).parent().attr('data-id');
 
-    const title = $('.input-h3').val();
-    const desc = $('.input-p').val();
+    const h3 = $(iconCheck).siblings('.input-h3');
+    const p = $(iconCheck).siblings('.input-p');
 
-    $('.input-h3').remove();
-    $('.input-p').remove();
+    const titleVal = $(h3).val();
+    const descVal = $(p).val();
 
-    $(iconCheck).parent().prepend('<p data-id="'+id+'">'+desc+'</p>');
-    $(iconCheck).parent().prepend('<h3 data-id="'+id+'">'+title+'</h3');
+    $(h3).remove();
+    $(p).remove();
 
-    markers[id].bindPopup(`<b>${title}</b><br>${desc}`);
+    $(iconCheck).parent().prepend('<p data-id="'+id+'">'+descVal+'</p>');
+    $(iconCheck).parent().prepend('<h3 data-id="'+id+'">'+titleVal+'</h3');
+
+    markers[id].bindPopup(`<b>${titleVal}</b><br>${descVal}`);
 
     const index = arrData.findIndex(x => x.id === parseInt(id));
-    
-    arrData[index].title = title;
-    arrData[index].info = desc;
+    arrData[index].title = titleVal;
+    arrData[index].info = descVal;
 
-    $('.icon').show();
-    $('.check').hide();
+    
+    $(iconCheck).parent().find('.delete').show();
+    $(iconCheck).parent().find('.drag').show();
+    $(iconCheck).parent().find('.edit').show();
+    $(iconCheck).parent().find('.check').hide();
 });
 
 
 // Marker click event
 $('.map').on('click', '.leaflet-marker-icon', (e) => {
     // Use the event to find the clicked element
-    const el = $(e.srcElement || e.target),
-    id = el.attr('id');
+    const el = $(e.target),
+    id = el[0]._leaflet_id;
 
     $('.places-item').removeClass('selected');
     $('li[data-id="'+id+'"]').addClass('selected'); 
@@ -231,14 +289,12 @@ $('.places-list').on('click', '.places-item', (e) => {
 // Map click event
 mymap.on('click', function(e){
     const marker = new L.marker([e.latlng.lat, e.latlng.lng]).addTo(mymap).bindPopup(`<b>Title</b><br>Description`).openPopup();
-    console.log(e.latlng.lat, e.latlng.lng);
+    const markerId = marker._leaflet_id + 1;
 
-    markers[marker._leaflet_id] = marker;
+    markers[markerId] = marker;
 
-    // markers[placesCount] = L.marker([e.latlng.lat, e.latlng.lng]).addTo(mymap).bindPopup(`<b>Title</b><br>Description`);
-    // markers[placesCount]._icon.id = placesCount;
     arrData.push({
-        'id': marker._leaflet_id,
+        'id': markerId,
         'title': 'Title',
         'info': 'Description',
         'lat': e.latlng.lat,
@@ -246,10 +302,8 @@ mymap.on('click', function(e){
     });
 
     $('.places-item').removeClass('selected');
-
-    const cssClass = "selected";
     
-    makeListItem(marker._leaflet_id, cssClass, 'Title', 'Description');
+    makeListItem(markerId, 'selected', 'Title', 'Description');
 
     arrDataLength();
 });
@@ -262,7 +316,7 @@ mymap.on('click', function(e){
 arrData.forEach(place => {
     if (arrData.length > 0) {
 
-        markers[place.id] = L.marker([place.lat, place.lang],
+        markers[place.id] = new L.marker([place.lat, place.lang],
             {
             bounceOnAdd: true
             }
@@ -271,17 +325,14 @@ arrData.forEach(place => {
         .bindPopup(`<b>${place.title}</b><br>${place.info}`);
 
         let cssClass;
-        const dataId = place.id;
-
         if (place === arrData[0]) {
             cssClass = "selected";
             markers[place.id].openPopup();
-            
         } else {
             cssClass = "";
         }
         
-        makeListItem(dataId, cssClass, place.title, place.info)        
+        makeListItem(place.id, cssClass, place.title, place.info)        
     }
 
     arrDataLength();
