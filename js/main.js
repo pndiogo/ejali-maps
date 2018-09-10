@@ -13,7 +13,7 @@ let arrData = [
     {
     'id': 44,
     'title': "You can edit my title",
-    'info': "And my description.",
+    'info': "And description.",
     'lat': 51.5,
     'lang': -0.08
     },
@@ -27,7 +27,7 @@ let arrData = [
     {
     'id': 48,
     'title': "Don't like me?",
-    'info': "You can delete me!",
+    'info': "You can delete me. :(",
     'lat': 51.5,
     'lang': -0.06
     }

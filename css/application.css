@@ -92,14 +92,15 @@ header h1 {
 
 /* CONTAINERS ------------------------------------- */
 .container {
-  max-width: 1000px;
   display: grid;
+  justify-content: center;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   grid-template-rows: 55vh;
   grid-gap: 15px;
+  max-width: 1000px;
+  margin: 3rem auto;
   background: #fff;
   box-shadow: 0 0.1em 0 0 rgba(0, 0, 0, 0.1);
-  margin: 45px auto;
   border-radius: 0.6em;
 }
 
@@ -142,7 +143,6 @@ ol > li .icon {
   z-index: 100;
   opacity: 0;
 }
-
 ol > li .edit,
 ol > li .check {
   right: 0.2em;
@@ -153,15 +153,15 @@ ol > li .drag {
 ol > li .delete {
   right: 4.2em;
 }
+ol > li .check {
+  opacity: 100;
+  display: none;
+}
 ol > li .divDelete,
 ol > li .divEdit,
 ol > li .divCheck,
 ol > li .divDrag {
   height: 1.7em;
-}
-ol > li .check {
-  opacity: 100;
-  display: none;
 }
 
 .fill-color {
@@ -189,5 +189,40 @@ input[type=text].input-p {
 }
 
 /* MEDIA QUERIES ---------------------------------- */
+@media (max-width: 1080px) {
+  .container {
+    margin: 2rem;
+  }
+}
+@media (max-width: 530px) {
+  header {
+    margin-top: 5rem;
+    margin-bottom: 12rem;
+    line-height: 1.2;
+  }
+  header h1 {
+    font-size: 5rem;
+  }
+
+  .text h1 {
+    font-size: 3rem;
+  }
+}
+@media (max-width: 430px) {
+  .container {
+    grid-gap: 0px;
+  }
+
+  .map {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .text {
+    background: #fff;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+}
 
 /*# sourceMappingURL=application.css.map */
