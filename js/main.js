@@ -77,7 +77,7 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
 // Build list item with title and info
 const makeListItem = (dataId, cssClass, title, info) => {
     const listItem = `                
-    <li data-id="${dataId}" class="places-item ${cssClass}">
+    <li data-id="${dataId}" class="places-item ${cssClass}" tabindex="1">
         <h3 data-id="${dataId}">${title}</h3>
         <p data-id="${dataId}">${info}</p>
         <svg class="icon delete" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -267,7 +267,7 @@ $('.map').on('click', '.leaflet-marker-icon', (e) => {
     id = el[0]._leaflet_id;
 
     $('.places-item').removeClass('selected');
-    $('li[data-id="'+id+'"]').addClass('selected'); 
+    $('li[data-id="'+id+'"]').addClass('selected').focus();
 
     mymap.panTo(markers[id].getLatLng());
  });
@@ -305,6 +305,8 @@ mymap.on('click', function(e){
     
     makeListItem(markerId, 'selected', 'Title', 'Description');
 
+    $('li[data-id="'+markerId+'"]').focus();
+    
     arrDataLength();
 });
 
