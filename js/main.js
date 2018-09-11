@@ -20,7 +20,7 @@ let arrData = [
     {
     'id': 46,
     'title': "Reorder?",
-    'info': "It's easy, just drag me.",
+    'info': "It's easy, just drag.",
     'lat': 51.5,
     'lang': -0.07
     },
@@ -272,8 +272,8 @@ $('.places-list').on('keydown', function(event){
 // Marker click event
 $('.map').on('click', '.leaflet-marker-icon', (e) => {
     // Use the event to find the clicked element
-    const el = $(e.target),
-    id = el[0]._leaflet_id;
+    const el = $(e.target);
+    const id = el[0]._leaflet_id;
 
     $('.places-item').removeClass('selected');
     $('li[data-id="'+id+'"]').addClass('selected').focus();
@@ -284,8 +284,8 @@ $('.map').on('click', '.leaflet-marker-icon', (e) => {
 
 // List click event
 $('.places-list').on('click', '.places-item', (e) => {
-    const el = $(e.srcElement || e.target),
-    id = $(el).attr('data-id');
+    const el = $(e.target);
+    const id = $(el).attr('data-id');
     
     $('.places-item').removeClass('selected');
     $('li[data-id="'+id+'"]').addClass('selected');
