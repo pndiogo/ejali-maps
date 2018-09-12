@@ -66,6 +66,8 @@ function populateMap() {
             markers[place.serverId] = new L.marker([place.lat, place.long],
                 {
                 myCustomId: place.serverId,
+                draggable:true,
+                autoPan: true,
                 bounceOnAdd: true
                 }
             )
@@ -357,10 +359,22 @@ let eventsWait = function() {
         $('.places-item').removeClass('selected');
         $('li[data-id="'+markerCustomId+'"]').addClass('selected').focus();
 
-        mymap.panTo(markers[markerCustomId].getLatLng());
+        const position = markers[markerCustomId].getLatLng();
+        console.log(position.lat);
+        console.log(position.lng);
+
+        markers[markerCustomId].openPopup();
+        mymap.panTo(position);
+
+        const index = arrData.findIndex(x => x.serverId === parseInt(markerCustomId));
+        console.log(index);
+        arrData[index].lat = position.lat;
+        arrData[index].long = position.lng;
+
+        dbStorageSet(markerCustomId, JSON.stringify(arrData[index]));
     });
 
-
+    
     // List click event
     $('.places-list').on('click', '.places-item', (e) => {
         const el = $(e.target);
@@ -380,8 +394,7 @@ let eventsWait = function() {
 
     // Map click event
     mymap.on('click', function(e){
-        const marker = new L.marker([e.latlng.lat, e.latlng.lng]).addTo(mymap).bindPopup(`<b>Title</b><br>Description`).openPopup();
-
+        const marker = new L.marker([e.latlng.lat, e.latlng.lng], {draggable: true, autoPan: true}).addTo(mymap).bindPopup(`<b>Title</b><br>Description`).openPopup();
         console.log(marker);
 
         const newMarker = {
