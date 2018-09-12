@@ -82,9 +82,10 @@ function populateMap() {
                 cssClass = "";
             }
             
-            makeListItem(place.serverId, cssClass, place.title, place.info)        
+            makeListItem(place.serverId, cssClass, place.title, place.info);        
         }
 
+        sortable.sort(sortable.options.store.get(sortable));
         arrDataLength();
     });
 };
@@ -110,7 +111,36 @@ const $p = $('.list-header-p');
 const $list = $('.places-list');
 
 const sortableList = document.querySelector('.places-list');
-const sortable = Sortable.create(sortableList);
+const sortable = Sortable.create(sortableList,
+    {
+        group: "list-order",
+        dataIdAttr: 'data-id',
+        sort: true,
+        store: {
+            /**
+             * Get the order of elements. Called once during initialization.
+             * @param   {Sortable}  sortable
+             * @returns {Array}
+             */
+            get: function (sortable) {
+                var order = localStorage.getItem(sortable.options.group.name);
+                console.log(order);
+                return order ? order.split('|') : [];
+            },
+
+            /**
+             * Save the order of elements. Called onEnd (when the item is dropped).
+             * @param {Sortable}  sortable
+             */
+            set: function (sortable) {
+                var order = sortable.toArray();
+                console.log(order);
+                localStorage.setItem(sortable.options.group.name, order.join('|'));
+            }
+        }
+            
+    }
+);
 
 
 // ==========================================================================
@@ -257,6 +287,7 @@ let eventsWait = function() {
         const arrIndex = arrData.findIndex(x => x.serverId === parseInt(id));
         arrData.splice(arrIndex,1);
 
+        sortable.options.store.set(sortable);
         arrDataLength();
 
         dbStorageDel(id);
@@ -422,6 +453,7 @@ let eventsWait = function() {
                 makeListItem(nextServerId, 'selected', 'Title', 'Description');
                 $('.places-item').removeClass('selected');
                 $('li[data-id="'+nextServerId+'"]').addClass('selected').focus();
+                sortable.options.store.set(sortable);
                 arrDataLength();
                 }
             );   
