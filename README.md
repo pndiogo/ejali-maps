@@ -8,7 +8,17 @@ Ejali Maps
 
 ## Info
 
-Online tool to save places on a map with a short description
+Online tool to save places on a map with a short description. Saves to server with fetch API. Database is reset every 24h.
+
+## Features
+
+Each place features a marker and a list item. All data, including title, description and position persists on server.
+* Add new place by clicking on the map
+* Edit title and description of place
+* Delete place
+* Manually reorder and sort list items
+* Draggable markers
+* Responsive design
 
 ## Built With
 
