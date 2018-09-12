@@ -14,14 +14,15 @@ Online tool to save places on a map with a short description
 
 * [Leaflet](http://www.leafletjs.com)
 * [Bouncemarker plugin for Leaflet from](https://github.com/maximeh/leaflet.bouncemarker) by [Maxime Hadjinlian](https://github.com/maximeh)
+* [Sortable](http://rubaxa.github.io/Sortable/) by Lebedev Konstantin (<ibnRubaXa@gmail.com>)
 * HTML5
 * CSS3
 * JS
 * jQuery
-* AJAX calls with promises
-* Asynchronous callbacks
+* Fetch API
 * CSS Grid
 * Sass
+* NPM
 * Git
 
 ## Authors

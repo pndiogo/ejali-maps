@@ -402,7 +402,7 @@ let eventsWait = function() {
                 arrData.push(newMarker);
                 makeListItem(nextServerId, 'selected', 'Title', 'Description');
                 $('.places-item').removeClass('selected');
-                $('li[data-id="'+newMarker+'"]').focus();
+                $('li[data-id="'+nextServerId+'"]').addClass('selected').focus();
                 arrDataLength();
                 }
             );   
