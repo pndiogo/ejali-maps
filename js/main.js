@@ -9,37 +9,6 @@ dbStorageInit('test');
 // ARRAY OF DATA FROM SERVER
 // ==========================================================================
 
-let arrTest = [
-    {
-    "title": "I'm a marker",
-    "info": "Nice to meet you!",
-    "lat": 51.5,
-    "long": -0.09,
-    "serverId": 1
-    },
-    {
-    "title": "You can edit my title",
-    "info": "And description.",
-    "lat": 51.5,
-    "long": -0.08,
-    "serverId": 2
-    },
-    {
-    "title": "Reorder?",
-    "info": "It's easy, just drag.",
-    "lat": 51.5,
-    "long": -0.07,
-    "serverId": 3
-    },
-    {
-    "title": "Don't like me?",
-    "info": "You can delete me. :(",
-    "lat": 51.5,
-    "long": -0.06,
-    "serverId": 4
-    }
-];
-
 let arrData = [];
 
 
@@ -48,12 +17,6 @@ let arrData = [];
 // ==========================================================================
 
 $(document).ready(function() {
-
-    // dbStorageSet(-1, JSON.stringify(arrTest)).then((data) => {
-    //     console.log(data);
-    // });
-
-
     dbStorageGet()
     .then((data) => {
         console.log(data);
@@ -141,7 +104,7 @@ let mapLong = -0.09;
 
 let mymap = "";
 
-const $p = $('#list-header-p');
+const $p = $('.list-header-p');
 const $list = $('.places-list');
 
 const sortableList = document.querySelector('.places-list');
@@ -325,7 +288,23 @@ let eventsWait = function() {
 
     // Click event to CHECK ICON
     $('.places-list').on('click', '.check', (e) => {
-        const iconCheck = e.target;
+        console.log(e.target);
+        editPlaceText(e.target);
+    });
+
+    // Enter keypress event to CHECK ICON
+    $('.places-list').on('keydown', function(e){ 
+        const keyCode = (e.keyCode ? e.keyCode : e.which);   
+        if (keyCode == 13) {
+            const check = $(e.target).siblings('.divCheck');
+            console.log(check);
+            editPlaceText(check);
+        };
+    });
+
+    // Function to edit place text
+    function editPlaceText(e) {
+        const iconCheck = e;
         
         const id = $(iconCheck).parent().attr('data-id');
 
@@ -350,23 +329,13 @@ let eventsWait = function() {
         arrData[index].title = titleVal;
         arrData[index].info = descVal;
 
-        
+        $(iconCheck).parent().find('.check').hide();
         $(iconCheck).parent().find('.delete').show();
         $(iconCheck).parent().find('.drag').show();
         $(iconCheck).parent().find('.edit').show();
-        $(iconCheck).parent().find('.check').hide();
 
         dbStorageSet(id, JSON.stringify(arrData[index]));
-    });
-
-
-    // Enter keypress event to CHECK ICON
-    $('.places-list').on('keydown', function(event){ 
-        const keyCode = (event.keyCode ? event.keyCode : event.which);   
-        if (keyCode == 13) {
-            $(event.target).parent().find('.check').trigger('click');        
-        }
-    });
+    }
 
 
     // Marker click event
