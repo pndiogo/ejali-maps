@@ -17,6 +17,7 @@ Each place features a marker and a list item. All data, including title, descrip
 * Edit title and description of place
 * Delete place
 * Manually reorder and sort list items
+* List items sorting order saved to localstorage
 * Draggable markers
 * Responsive design
 
