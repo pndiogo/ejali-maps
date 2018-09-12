@@ -74,18 +74,21 @@ function populateMap() {
             .addTo(mymap)
             .bindPopup(`<b>${place.title}</b><br>${place.info}`);
 
-            let cssClass;
-            if (place === arrData[0]) {
-                cssClass = "selected";
-                markers[place.serverId].openPopup();
-            } else {
-                cssClass = "";
-            }
-            
+            let cssClass = "";
+           
             makeListItem(place.serverId, cssClass, place.title, place.info);        
         }
 
         sortable.sort(sortable.options.store.get(sortable));
+
+        $('.places-item').removeClass('selected');
+        $('.places-item:first').addClass('selected').focus();
+
+        const markerCustomId = $('.places-item:first').attr('data-id');
+        const position = markers[markerCustomId].getLatLng();
+        markers[markerCustomId].openPopup();
+        mymap.panTo(position);
+
         arrDataLength();
     });
 };
