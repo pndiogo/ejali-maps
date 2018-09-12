@@ -38,8 +38,11 @@ ol > li {
   background: #fff;
   transition: background-color 0.3s ease-out;
 }
-ol > li.selected, ol > li:hover {
+ol > li.selected {
   background-color: #eeea72;
+}
+ol > li:hover {
+  background-color: #f3f1a0;
 }
 ol > li:hover .icon {
   opacity: 100;
