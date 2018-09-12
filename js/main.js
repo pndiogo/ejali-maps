@@ -263,6 +263,9 @@ let eventsWait = function() {
 
     // Click event to EDIT item and marker
     $('.places-list').on('click', '.divEdit', (e) => {
+        // Disables sortable
+        sortable.option("disabled", true); // get
+
         const iconEdit = e.target;
 
         const h3 = $(iconEdit).siblings('h3')
@@ -304,6 +307,9 @@ let eventsWait = function() {
 
     // Function to edit place text
     function editPlaceText(e) {
+        // Enables sortable
+        sortable.option("disabled", false); // get
+
         const iconCheck = e;
         
         const id = $(iconCheck).parent().attr('data-id');
