@@ -1,3 +1,5 @@
+![EjaliMapsScreenshot](img/ejali-screenshot-1.png)
+
 # Project Title
 
 Ejali Maps
