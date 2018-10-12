@@ -26,6 +26,7 @@ ol {
 }
 
 ol > li {
+  cursor: pointer;
   position: relative;
   /* Create a positioning context */
   margin: 0 0 6px 2em;

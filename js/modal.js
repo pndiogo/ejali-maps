@@ -25,6 +25,11 @@ fetch(endpoint)
   .then(res => {
     let converter = new showdown.Converter();
     modalBody.innerHTML = converter.makeHtml(res);
+    if (localStorage.getItem('modalFirstShow') === 'false') {
+      closeModal();
+    }
+    // Set localStorage to false
+    localStorage.setItem('modalFirstShow', false);
   });
 
 /**
@@ -38,6 +43,18 @@ closeBtn.addEventListener('click', closeModal);
 
 // Listen for outside click
 window.addEventListener('click', clickOutside);
+
+//Listen for escape key to close modal
+document.addEventListener('keyup', function(event) {
+  if (event.defaultPrevented) {
+    return;
+  }
+  var key = event.key || event.keyCode;
+
+  if (key === 'Escape' || key === 'Esc' || key === 27) {
+    closeModal();
+  }
+});
 
 /**
  * FUNCTIONS
