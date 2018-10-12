@@ -2,7 +2,7 @@
 
 Ejali Maps
 
-## Demo
+## Live Demo
 
 [https://pndiogo.github.io/ejali-maps/](https://pndiogo.github.io/ejali-maps/)
 
@@ -13,32 +13,35 @@ Online tool to save places on a map with a short description. Saves to server wi
 ## Features
 
 Each place features a marker and a list item. All data, including title, description and position persists on server.
-* Add new place by clicking on the map
-* Edit title and description of place
-* Delete place
-* Manually reorder and sort list items
-* List items sorting order saved to localstorage
-* Draggable markers
-* Responsive design
+
+- Add new place by clicking on the map
+- Edit title and description of place
+- Delete place
+- Manually reorder and sort list items
+- List items sorting order saved to localstorage
+- Draggable markers
+- Responsive design
 
 ## Built With
 
-* [Leaflet](http://www.leafletjs.com)
-* [Bouncemarker plugin for Leaflet from](https://github.com/maximeh/leaflet.bouncemarker) by [Maxime Hadjinlian](https://github.com/maximeh)
-* [Sortable](http://rubaxa.github.io/Sortable/) by Lebedev Konstantin (<ibnRubaXa@gmail.com>)
-* HTML5
-* CSS3
-* JS
-* jQuery
-* Fetch API
-* CSS Grid
-* Sass
-* NPM
-* Git
+- [Leaflet](http://www.leafletjs.com)
+- [Bouncemarker plugin for Leaflet from](https://github.com/maximeh/leaflet.bouncemarker) by [Maxime Hadjinlian](https://github.com/maximeh)
+- [Sortable](http://rubaxa.github.io/Sortable/) by Lebedev Konstantin (<ibnRubaXa@gmail.com>)
+- [Showdown.js](https://github.com/showdownjs/showdown) by Credits (https://github.com/showdownjs/showdown/blob/master/CREDITS.md)
+- HTML5
+- CSS3
+- JS
+- jQuery
+- Fetch API
+- CSS Grid
+- CSS Flexbox
+- Sass
+- NPM
+- Git
 
 ## Authors
 
-* **Paulo Diogo** - [pndiogo](https://github.com/pndiogo)
+- **Paulo Diogo** - [pndiogo](https://github.com/pndiogo)
 
 ## License
 
