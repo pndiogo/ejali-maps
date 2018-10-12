@@ -26,7 +26,7 @@ ol {
 }
 
 ol > li {
-  cursor: pointer;
+  cursor: grab;
   position: relative;
   /* Create a positioning context */
   margin: 0 0 6px 2em;
@@ -46,11 +46,14 @@ ol > li:hover {
   background-color: #f3f1a0;
 }
 ol > li:hover .icon {
+  cursor: pointer;
   opacity: 100;
   transition: opacity 0.3s ease-out;
 }
 ol > li:active {
   background-color: #f9f8cd;
+  cursor: grab;
+  cursor: -webkit-grabbing;
 }
 
 ol > li::before {

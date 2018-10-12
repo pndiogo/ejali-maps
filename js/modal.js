@@ -27,6 +27,8 @@ fetch(endpoint)
     modalBody.innerHTML = converter.makeHtml(res);
     if (localStorage.getItem('modalFirstShow') === 'false') {
       closeModal();
+    } else {
+      openModal();
     }
     // Set localStorage to false
     localStorage.setItem('modalFirstShow', false);
