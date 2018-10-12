@@ -65,6 +65,10 @@
   padding: 10px 20px;
 }
 
+.modal-body p img {
+  display: none;
+}
+
 .closeBtn {
   color: #f4f4f4;
   font-size: 1.6rem;
