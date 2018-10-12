@@ -2,8 +2,7 @@
 // DATABASE DEFINITION
 // ==========================================================================
 
-dbStorageInit('test');
-
+dbStorageInit('ejali');
 
 // ==========================================================================
 // ARRAY OF DATA FROM SERVER
@@ -11,95 +10,93 @@ dbStorageInit('test');
 
 let arrData = [];
 
-
 // ==========================================================================
 // ON LOAD CALL TO SERVER
 // ==========================================================================
 
 $(document).ready(function() {
-    dbStorageGet()
-    .then((data) => {
-        console.log(data);
-        if (!isEmpty(data)) {
-        for(key in data) {
-            const obj = JSON.parse(data[key]);
-            console.log(obj);
-            //obj.forEach(function (el)  {
-                arrData.push(obj);
-            //});
+  dbStorageGet()
+    .then(data => {
+      console.log(data);
+      if (!isEmpty(data)) {
+        for (key in data) {
+          const obj = JSON.parse(data[key]);
+          console.log(obj);
+          //obj.forEach(function (el)  {
+          arrData.push(obj);
+          //});
         }
         mapLat = arrData[0].lat;
         mapLong = arrData[0].long;
-        }
-    })  
+      }
+    })
     .then(buildMap)
     .then(populateMap)
     .then(eventsWait);
 });
-
 
 // ==========================================================================
 // MAP INIT
 // ==========================================================================
 
 const buildMap = function() {
-    mymap = L.map('map-1').setView([mapLat, mapLong], 13);
+  mymap = L.map('map-1').setView([mapLat, mapLong], 13);
 
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-        maxZoom: 18,
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        id: 'mapbox.streets'
-    }).addTo(mymap);
+  L.tileLayer(
+    'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw',
+    {
+      maxZoom: 18,
+      attribution:
+        'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      id: 'mapbox.streets'
+    }
+  ).addTo(mymap);
 };
-
 
 // ==========================================================================
 // MARKERS INIT WITH CONTENT FROM SERVER
 // ==========================================================================
 
 function populateMap() {
-    arrData.forEach(place => {
-        if (arrData.length > 0) {
+  arrData.forEach(place => {
+    if (arrData.length > 0) {
+      markers[place.serverId] = new L.marker([place.lat, place.long], {
+        myCustomId: place.serverId,
+        draggable: true,
+        autoPan: true,
+        bounceOnAdd: true
+      })
+        .addTo(mymap)
+        .bindPopup(`<b>${place.title}</b><br>${place.info}`);
 
-            markers[place.serverId] = new L.marker([place.lat, place.long],
-                {
-                myCustomId: place.serverId,
-                draggable:true,
-                autoPan: true,
-                bounceOnAdd: true
-                }
-            )
-            .addTo(mymap)
-            .bindPopup(`<b>${place.title}</b><br>${place.info}`);
+      let cssClass = '';
 
-            let cssClass = "";
-           
-            makeListItem(place.serverId, cssClass, place.title, place.info);        
-        }
+      makeListItem(place.serverId, cssClass, place.title, place.info);
+    }
 
-        sortable.sort(sortable.options.store.get(sortable));
+    sortable.sort(sortable.options.store.get(sortable));
 
-        $('.places-item').removeClass('selected');
-        $('.places-item:first').addClass('selected').focus();
+    $('.places-item').removeClass('selected');
+    $('.places-item:first')
+      .addClass('selected')
+      .focus();
 
-        const markerCustomId = $('.places-item:first').attr('data-id');
-        const position = markers[markerCustomId].getLatLng();
-        markers[markerCustomId].openPopup();
-        mymap.panTo(position);
+    const markerCustomId = $('.places-item:first').attr('data-id');
+    const position = markers[markerCustomId].getLatLng();
+    markers[markerCustomId].openPopup();
+    mymap.panTo(position);
 
-        arrDataLength();
-    });
-};
-
+    arrDataLength();
+  });
+}
 
 // ==========================================================================
 // OBJECT TO SAVE MARKERS
 // ==========================================================================
 
 let markers = {};
-
 
 // ==========================================================================
 // VARIABLES
@@ -108,43 +105,39 @@ let markers = {};
 let mapLat = 51.5;
 let mapLong = -0.09;
 
-let mymap = "";
+let mymap = '';
 
 const $p = $('.list-header-p');
 const $list = $('.places-list');
 
 const sortableList = document.querySelector('.places-list');
-const sortable = Sortable.create(sortableList,
-    {
-        group: "list-order",
-        dataIdAttr: 'data-id',
-        sort: true,
-        store: {
-            /**
-             * Get the order of elements. Called once during initialization.
-             * @param   {Sortable}  sortable
-             * @returns {Array}
-             */
-            get: function (sortable) {
-                var order = localStorage.getItem(sortable.options.group.name);
-                console.log(order);
-                return order ? order.split('|') : [];
-            },
+const sortable = Sortable.create(sortableList, {
+  group: 'list-order',
+  dataIdAttr: 'data-id',
+  sort: true,
+  store: {
+    /**
+     * Get the order of elements. Called once during initialization.
+     * @param   {Sortable}  sortable
+     * @returns {Array}
+     */
+    get: function(sortable) {
+      var order = localStorage.getItem(sortable.options.group.name);
+      console.log(order);
+      return order ? order.split('|') : [];
+    },
 
-            /**
-             * Save the order of elements. Called onEnd (when the item is dropped).
-             * @param {Sortable}  sortable
-             */
-            set: function (sortable) {
-                var order = sortable.toArray();
-                console.log(order);
-                localStorage.setItem(sortable.options.group.name, order.join('|'));
-            }
-        }
-            
+    /**
+     * Save the order of elements. Called onEnd (when the item is dropped).
+     * @param {Sortable}  sortable
+     */
+    set: function(sortable) {
+      var order = sortable.toArray();
+      console.log(order);
+      localStorage.setItem(sortable.options.group.name, order.join('|'));
     }
-);
-
+  }
+});
 
 // ==========================================================================
 // FUNCTIONS
@@ -152,16 +145,15 @@ const sortable = Sortable.create(sortableList,
 
 // Utilitity function to check if object is empty
 function isEmpty(obj) {
-    for(var key in obj) {
-        if(obj.hasOwnProperty(key))
-            return false;
-    }
-    return true;
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) return false;
+  }
+  return true;
 }
 
 // Build list item with title and info
 const makeListItem = (dataId, cssClass, title, info) => {
-    const listItem = `                
+  const listItem = `                
     <li data-id="${dataId}" class="places-item ${cssClass}" tabindex="1">
         <h3 data-id="${dataId}">${title}</h3>
         <p data-id="${dataId}">${info}</p>
@@ -250,215 +242,268 @@ const makeListItem = (dataId, cssClass, title, info) => {
         </div>
     </li>
     `;
-    $($list).append(listItem);
+  $($list).append(listItem);
 };
-
 
 // Hide #list-header-p when places exist
 const arrDataLength = () => {
-    if (arrData.length > 0) {
-        $($p).hide();
-    } else {
-        $($p).show();
-    }
+  if (arrData.length > 0) {
+    $($p).hide();
+  } else {
+    $($p).show();
+  }
 };
-
 
 // ==========================================================================
 // EVENT FUNCTIONS WAITING FOR FETCH
 // ==========================================================================
 
 let eventsWait = function() {
+  // ==========================================================================
+  // EVENTS
+  // ==========================================================================
 
-    // ==========================================================================
-    // EVENTS
-    // ==========================================================================
+  // Click event to DELETE item and marker
+  $('.places-list').on('click', '.divDelete', e => {
+    const iconDelete = e.target;
+    const id = $(iconDelete)
+      .parent()
+      .attr('data-id');
 
-    // Click event to DELETE item and marker
-    $('.places-list').on('click', '.divDelete', (e) => {
-        const iconDelete = e.target;
-        const id = $(iconDelete).parent().attr('data-id');
-        
-        $(iconDelete).parent().remove();
-        $('#'+id).remove();
-        mymap.removeLayer(markers[id]);
+    $(iconDelete)
+      .parent()
+      .remove();
+    $('#' + id).remove();
+    mymap.removeLayer(markers[id]);
 
-        mymap.closePopup()
+    mymap.closePopup();
 
-        delete markers[id];
+    delete markers[id];
 
-        const arrIndex = arrData.findIndex(x => x.serverId === parseInt(id));
-        arrData.splice(arrIndex,1);
+    const arrIndex = arrData.findIndex(x => x.serverId === parseInt(id));
+    arrData.splice(arrIndex, 1);
 
+    sortable.options.store.set(sortable);
+    arrDataLength();
+
+    dbStorageDel(id);
+  });
+
+  // Click event to EDIT item and marker
+  $('.places-list').on('click', '.divEdit', e => {
+    // Disables sortable
+    sortable.option('disabled', true); // get
+
+    const iconEdit = e.target;
+
+    const h3 = $(iconEdit).siblings('h3');
+    const h3Text = $(h3).text();
+    const p = $(iconEdit).siblings('p');
+    const pText = $(p).text();
+
+    const id = $(iconEdit)
+      .parent()
+      .attr('data-id');
+    markers[id].openPopup();
+
+    $(iconEdit)
+      .parent()
+      .find('.delete')
+      .hide();
+    $(iconEdit)
+      .parent()
+      .find('.drag')
+      .hide();
+    $(iconEdit)
+      .parent()
+      .find('.edit')
+      .hide();
+    $(iconEdit)
+      .parent()
+      .find('.check')
+      .show();
+
+    $(h3).remove();
+    $(p).remove();
+
+    $(iconEdit)
+      .parent()
+      .prepend(
+        '<input type="text" data-id="' +
+          id +
+          '" class="input-p" placeholder="Description" value="' +
+          pText +
+          '">'
+      );
+    $(iconEdit)
+      .parent()
+      .prepend(
+        '<input type="text" data-id="' +
+          id +
+          '" class="input-h3" placeholder="Title" value="' +
+          h3Text +
+          '" autofocus>'
+      );
+  });
+
+  // Click event to CHECK ICON
+  $('.places-list').on('click', '.check', e => {
+    console.log(e.target);
+    editPlaceText(e.target);
+  });
+
+  // Enter keypress event to CHECK ICON
+  $('.places-list').on('keydown', function(e) {
+    const keyCode = e.keyCode ? e.keyCode : e.which;
+    if (keyCode == 13) {
+      const check = $(e.target).siblings('.divCheck');
+      console.log(check);
+      editPlaceText(check);
+    }
+  });
+
+  // Function to edit place text
+  function editPlaceText(e) {
+    // Enables sortable
+    sortable.option('disabled', false); // get
+
+    const iconCheck = e;
+
+    const id = $(iconCheck)
+      .parent()
+      .attr('data-id');
+
+    console.log(id);
+
+    const h3 = $(iconCheck).siblings('.input-h3');
+    const p = $(iconCheck).siblings('.input-p');
+
+    const titleVal = $(h3).val();
+    const descVal = $(p).val();
+
+    $(h3).remove();
+    $(p).remove();
+
+    $(iconCheck)
+      .parent()
+      .prepend('<p data-id="' + id + '">' + descVal + '</p>');
+    $(iconCheck)
+      .parent()
+      .prepend('<h3 data-id="' + id + '">' + titleVal + '</h3');
+
+    markers[id].bindPopup(`<b>${titleVal}</b><br>${descVal}`);
+
+    const index = arrData.findIndex(x => x.serverId === parseInt(id));
+    console.log(index);
+    arrData[index].title = titleVal;
+    arrData[index].info = descVal;
+
+    $(iconCheck)
+      .parent()
+      .find('.check')
+      .hide();
+    $(iconCheck)
+      .parent()
+      .find('.delete')
+      .show();
+    $(iconCheck)
+      .parent()
+      .find('.drag')
+      .show();
+    $(iconCheck)
+      .parent()
+      .find('.edit')
+      .show();
+
+    dbStorageSet(id, JSON.stringify(arrData[index]));
+  }
+
+  // Marker click event
+  $('.map').on('click', '.leaflet-marker-icon', e => {
+    // Use the event to find the clicked element
+    const el = $(e.target);
+    const markerId = el[0]._leaflet_id - 1;
+    const markerCustomId = mymap._layers[markerId].options.myCustomId;
+    console.log(el);
+    console.log(markerId);
+    console.log(markerCustomId);
+
+    $('.places-item').removeClass('selected');
+    $('li[data-id="' + markerCustomId + '"]')
+      .addClass('selected')
+      .focus();
+
+    const position = markers[markerCustomId].getLatLng();
+    console.log(position.lat);
+    console.log(position.lng);
+
+    markers[markerCustomId].openPopup();
+    mymap.panTo(position);
+
+    const index = arrData.findIndex(
+      x => x.serverId === parseInt(markerCustomId)
+    );
+    console.log(index);
+    arrData[index].lat = position.lat;
+    arrData[index].long = position.lng;
+
+    dbStorageSet(markerCustomId, JSON.stringify(arrData[index]));
+  });
+
+  // List click event
+  $('.places-list').on('click', '.places-item', e => {
+    const el = $(e.target);
+    const id = $(el).attr('data-id');
+    console.log(el);
+    console.log(id);
+
+    $('.places-item').removeClass('selected');
+    $('li[data-id="' + id + '"]').addClass('selected');
+
+    if (markers[id]) {
+      mymap.panTo(markers[id].getLatLng());
+      markers[id].openPopup();
+    }
+  });
+
+  // Map click event
+  mymap.on('click', function(e) {
+    const marker = new L.marker([e.latlng.lat, e.latlng.lng], {
+      draggable: true,
+      autoPan: true
+    })
+      .addTo(mymap)
+      .bindPopup(`<b>Title</b><br>Description`)
+      .openPopup();
+    console.log(marker);
+
+    let nextServerId = 0;
+
+    const newMarker = {
+      title: 'Title',
+      info: 'Description',
+      lat: e.latlng.lat,
+      long: e.latlng.lng,
+      serverId: 0
+    };
+
+    dbStorageSet(-1, JSON.stringify(newMarker))
+      .then(serverId => {
+        nextServerId = Number(serverId);
+        newMarker.serverId = nextServerId;
+        dbStorageSet(serverId, JSON.stringify(newMarker));
+      })
+      .then(() => {
+        marker.options.myCustomId = nextServerId;
+        markers[nextServerId] = marker;
+        arrData.push(newMarker);
+        makeListItem(nextServerId, 'selected', 'Title', 'Description');
+        $('.places-item').removeClass('selected');
+        $('li[data-id="' + nextServerId + '"]')
+          .addClass('selected')
+          .focus();
         sortable.options.store.set(sortable);
         arrDataLength();
-
-        dbStorageDel(id);
-    });
-
-
-    // Click event to EDIT item and marker
-    $('.places-list').on('click', '.divEdit', (e) => {
-        // Disables sortable
-        sortable.option("disabled", true); // get
-
-        const iconEdit = e.target;
-
-        const h3 = $(iconEdit).siblings('h3')
-        const h3Text = $(h3).text();
-        const p = $(iconEdit).siblings('p');
-        const pText = $(p).text();
-
-        const id = $(iconEdit).parent().attr('data-id');
-        markers[id].openPopup();
-        
-        $(iconEdit).parent().find('.delete').hide();
-        $(iconEdit).parent().find('.drag').hide();
-        $(iconEdit).parent().find('.edit').hide();
-        $(iconEdit).parent().find('.check').show();
-
-        $(h3).remove();
-        $(p).remove();
-
-        $(iconEdit).parent().prepend('<input type="text" data-id="'+id+'" class="input-p" placeholder="Description" value="'+pText+'">');
-        $(iconEdit).parent().prepend('<input type="text" data-id="'+id+'" class="input-h3" placeholder="Title" value="'+h3Text+'" autofocus>');
-    });
-
-
-    // Click event to CHECK ICON
-    $('.places-list').on('click', '.check', (e) => {
-        console.log(e.target);
-        editPlaceText(e.target);
-    });
-
-    // Enter keypress event to CHECK ICON
-    $('.places-list').on('keydown', function(e){ 
-        const keyCode = (e.keyCode ? e.keyCode : e.which);   
-        if (keyCode == 13) {
-            const check = $(e.target).siblings('.divCheck');
-            console.log(check);
-            editPlaceText(check);
-        };
-    });
-
-    // Function to edit place text
-    function editPlaceText(e) {
-        // Enables sortable
-        sortable.option("disabled", false); // get
-
-        const iconCheck = e;
-        
-        const id = $(iconCheck).parent().attr('data-id');
-
-        console.log(id);
-
-        const h3 = $(iconCheck).siblings('.input-h3');
-        const p = $(iconCheck).siblings('.input-p');
-
-        const titleVal = $(h3).val();
-        const descVal = $(p).val();
-
-        $(h3).remove();
-        $(p).remove();
-
-        $(iconCheck).parent().prepend('<p data-id="'+id+'">'+descVal+'</p>');
-        $(iconCheck).parent().prepend('<h3 data-id="'+id+'">'+titleVal+'</h3');
-
-        markers[id].bindPopup(`<b>${titleVal}</b><br>${descVal}`);
-
-        const index = arrData.findIndex(x => x.serverId === parseInt(id));
-        console.log(index);
-        arrData[index].title = titleVal;
-        arrData[index].info = descVal;
-
-        $(iconCheck).parent().find('.check').hide();
-        $(iconCheck).parent().find('.delete').show();
-        $(iconCheck).parent().find('.drag').show();
-        $(iconCheck).parent().find('.edit').show();
-
-        dbStorageSet(id, JSON.stringify(arrData[index]));
-    }
-
-
-    // Marker click event
-    $('.map').on('click', '.leaflet-marker-icon', (e) => {
-        // Use the event to find the clicked element
-        const el = $(e.target);
-        const markerId = el[0]._leaflet_id - 1;
-        const markerCustomId = mymap._layers[markerId].options.myCustomId;
-        console.log(el);
-        console.log(markerId);
-        console.log(markerCustomId);
-
-        $('.places-item').removeClass('selected');
-        $('li[data-id="'+markerCustomId+'"]').addClass('selected').focus();
-
-        const position = markers[markerCustomId].getLatLng();
-        console.log(position.lat);
-        console.log(position.lng);
-
-        markers[markerCustomId].openPopup();
-        mymap.panTo(position);
-
-        const index = arrData.findIndex(x => x.serverId === parseInt(markerCustomId));
-        console.log(index);
-        arrData[index].lat = position.lat;
-        arrData[index].long = position.lng;
-
-        dbStorageSet(markerCustomId, JSON.stringify(arrData[index]));
-    });
-
-    
-    // List click event
-    $('.places-list').on('click', '.places-item', (e) => {
-        const el = $(e.target);
-        const id = $(el).attr('data-id');
-        console.log(el);
-        console.log(id);
-        
-        $('.places-item').removeClass('selected');
-        $('li[data-id="'+id+'"]').addClass('selected');
-
-        if (markers[id]) {
-            mymap.panTo(markers[id].getLatLng());
-            markers[id].openPopup();
-        }
-    });
-
-
-    // Map click event
-    mymap.on('click', function(e){
-        const marker = new L.marker([e.latlng.lat, e.latlng.lng], {draggable: true, autoPan: true}).addTo(mymap).bindPopup(`<b>Title</b><br>Description`).openPopup();
-        console.log(marker);
-
-        const newMarker = {
-            "title": "Title",
-            "info": "Description",
-            "lat": e.latlng.lat,
-            "long": e.latlng.lng
-        };
-
-        let nextServerId = 0;
-        console.log(nextServerId);
-        dbStorageCount()
-            .then( res => {
-                nextServerId += Number(res) + 1;
-                console.log(nextServerId);
-                newMarker.serverId = nextServerId;
-                marker.options.myCustomId = nextServerId;
-             })  
-            .then( () => {
-                dbStorageSet(-1, JSON.stringify(newMarker))
-            })
-            .then( () => {
-                markers[nextServerId] = marker;
-                arrData.push(newMarker);
-                makeListItem(nextServerId, 'selected', 'Title', 'Description');
-                $('.places-item').removeClass('selected');
-                $('li[data-id="'+nextServerId+'"]').addClass('selected').focus();
-                sortable.options.store.set(sortable);
-                arrDataLength();
-                }
-            );   
-    });
+      });
+  });
 };
