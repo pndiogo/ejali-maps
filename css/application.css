@@ -66,7 +66,7 @@ ol > li::before {
   box-sizing: border-box;
   width: 2em;
   /* Some space between the number and the content in browsers that support
-     generated content but not positioning it (Camino 2 is one example) */
+    generated content but not positioning it (Camino 2 is one example) */
   margin-right: 8px;
   padding: 4px;
   border-top: 2px solid #eeea72;
@@ -102,7 +102,7 @@ header h1 {
   display: grid;
   justify-content: center;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  grid-template-rows: 55vh;
+  grid-template-rows: 500px;
   grid-gap: 15px;
   max-width: 1000px;
   margin: 3rem auto;
@@ -144,7 +144,7 @@ ol > li .icon {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   /* Some space between the number and the content in browsers that support
-      generated content but not positioning it (Camino 2 is one example) */
+          generated content but not positioning it (Camino 2 is one example) */
   margin-right: 8px;
   padding: 4px;
   z-index: 100;
@@ -203,7 +203,7 @@ input[type=text].input-p {
 }
 @media (max-width: 530px) {
   header {
-    margin-top: 5rem;
+    margin-top: 0;
     margin-bottom: 12rem;
     line-height: 1.2;
   }
@@ -214,10 +214,15 @@ input[type=text].input-p {
   .text h1 {
     font-size: 3rem;
   }
+
+  .container {
+    grid-template-rows: 400px;
+  }
 }
 @media (max-width: 430px) {
   .container {
     grid-gap: 0px;
+    grid-template-rows: 350px;
   }
 
   .map {
