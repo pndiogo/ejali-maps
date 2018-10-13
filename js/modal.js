@@ -25,13 +25,13 @@ fetch(endpoint)
   .then(res => {
     let converter = new showdown.Converter();
     modalBody.innerHTML = converter.makeHtml(res);
-    if (localStorage.getItem('modalFirstShow') === 'false') {
+    if (localStorage.getItem('modalEjali') === 'false') {
       closeModal();
     } else {
       openModal();
     }
     // Set localStorage to false
-    localStorage.setItem('modalFirstShow', false);
+    localStorage.setItem('modalEjali', false);
   });
 
 /**
